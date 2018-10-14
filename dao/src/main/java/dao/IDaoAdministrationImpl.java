@@ -31,10 +31,11 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 	
 	@Override
 	public void ajouter(Administration a) {
+		PreparedStatement preparedStatement = null; 
 		try {
 			//Etape1 : Création de la requête
 			String sql = "INSERT INTO administration VALUES(NULL,?,?,?,?,?,?,?,?,?,?,?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+			 preparedStatement = connexion.prepareStatement(sql);
 			
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, a.getPrenom());
@@ -56,18 +57,29 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			System.out.println("Echec de l'insertion de lagent de l'administration.");
+		}try {
+			preparedStatement.close();
+			System.out.println("Fermeture preparedStatement(ajouter) adminstration :  réussit.");
+		} catch (SQLException e) {
+			System.out.println("Echec fermeture preparedStatement(ajouter) adminstration.");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Fin traitement ajouter adminstration.");
 		}
+				
+		
 		
 	}
 
 	@Override
 	public Administration lire(Administration a) {
 		Administration admin = new Administration();
+		PreparedStatement preparedStatement = null;
 		try {
 			//Etape1 : Création de la requête
 			String sql = "SELECT * FROM administration where id_administration = ?";
 			 
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+			 preparedStatement = connexion.prepareStatement(sql);
 			
 			//Etape2 : transmission de la valeur aux paramètres de la requête
 			preparedStatement.setInt(1, a.getIdAdministration());
@@ -101,6 +113,14 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation des informations de l'agent de l'administration.");
+		}try {
+			preparedStatement.close();
+			System.out.println("Fermeture preparedStatement(lire) adminstration :  réussit.");
+		} catch (SQLException e) {
+			System.out.println("Echec fermeture preparedStatement(lire) adminstration.");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Fin traitement lire adminstration.");
 		}
 		
 		return admin;
@@ -109,11 +129,11 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 	@Override
 	public List<Administration> lire() {
 List<Administration> listeAdmin = new ArrayList<>();
-		
+Statement statement = null;
 		try {
 			//Etape1 : Création de la requête
 			String sql = "SELECT * FROM administration";
-			Statement statement = connexion.createStatement();
+			 statement = connexion.createStatement();
 			
 			//Etape2: Exécution de la requête
 			ResultSet resultSet = statement.executeQuery(sql);
@@ -143,16 +163,25 @@ List<Administration> listeAdmin = new ArrayList<>();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des agents de l'administration.");
+		}try {
+				statement.close();
+			System.out.println("Fermeture statement(liste) adminstration :  réussit.");
+		} catch (SQLException e) {
+			System.out.println("Echec fermeture statement(liste) adminstration.");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Fin traitement liste adminstration.");
 		}
 		return listeAdmin;
 	}
 
 	@Override
 	public void modifier(Administration a) {
+		PreparedStatement preparedStatement = null;
 		try {
 			//Etape1 : Création de la requête
 			String sql = "UPDATE administration SET prenom_administration = ?, nom_administration=?, date_naissance_administration =?, lieu_naissance_administration =?, sexe_administration =?, adresse_administration =?, telephonne_administration =?, email_administration =?, date_recrutement_administration =?, id_profession=?, id_diplome=? WHERE id_administration=?";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+			 preparedStatement = connexion.prepareStatement(sql);
 			
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, a.getPrenom());
@@ -174,18 +203,27 @@ List<Administration> listeAdmin = new ArrayList<>();
 				System.out.println("Modification des informations de l'agent de l'administration réussit.");
 			
 		} catch (SQLException e1) {
-			e1.printStackTrace();
 			System.out.println("Echec de la modification des informations de l'agent de l'administration.");
-		}	
+			e1.printStackTrace();			
+		}try {
+			preparedStatement.close();
+			System.out.println("Fermeture preparedStatement(modifier) adminstration :  réussit.");
+		} catch (SQLException e) {
+			System.out.println("Echec fermeture preparedStatement(modifier) adminstration.");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Fin traitement modifier adminstration.");
+		}
 		
 	}
 
 	@Override
 	public void supprimer(Administration a) {
+		PreparedStatement preparedStatement = null;
 		try {
 			//Etape1 : Création de la requête
 			String sql = "DELETE FROM administration where id_administration=?";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+			 preparedStatement = connexion.prepareStatement(sql);
 			
 			//Etape2 : transmission de la valeur aux paramètres de la requête
 			preparedStatement.setInt(1, a.getIdAdministration());
@@ -196,8 +234,15 @@ List<Administration> listeAdmin = new ArrayList<>();
 				System.out.println("Suppression de l'agent de l'administration réussit.");
 			
 		} catch (SQLException e1) {
-			e1.printStackTrace();
-			
+			e1.printStackTrace();			
+		}try {
+			preparedStatement.close();
+			System.out.println("Fermeture preparedStatement(supprimer) adminstration :  réussit.");
+		} catch (SQLException e) {
+			System.out.println("Echec fermeture preparedStatement(supprimer) adminstration.");
+			e.printStackTrace();
+		} finally {
+			System.out.println("Fin traitement supprimer adminstration.");
 		}
 		
 	}
@@ -205,10 +250,11 @@ List<Administration> listeAdmin = new ArrayList<>();
 	@Override
 	public Administration dernierenregistrement() {
 		Administration adminlast = new Administration();
+		Statement statement = null;
 		try {
 			//Etape1 : Création de la requête
 			String sql = "Select * from administration where id_administration = (SELECT MAX(id_administration)  from administration)";
-			Statement statement = connexion.createStatement();
+			 statement = connexion.createStatement();
 			
 			//Etape2: Exécution de la requête
 			ResultSet resultSet = statement.executeQuery(sql);
@@ -235,8 +281,16 @@ List<Administration> listeAdmin = new ArrayList<>();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("Echec de la récupération du dernier eleve enregistré.");
-		}
+			System.out.println("Echec de la récupération du dernier agent administratif enregistré.");
+		}try {
+			statement.close();
+		System.out.println("Fermeture statement(dernierenregistrement) adminstration :  réussit.");
+	} catch (SQLException e) {
+		System.out.println("Echec fermeture statement(dernierenregistrement) adminstration.");
+		e.printStackTrace();
+	} finally {
+		System.out.println("Fin traitement dernierenregistrement adminstration.");
+	}
 
 		return adminlast;
 	}
