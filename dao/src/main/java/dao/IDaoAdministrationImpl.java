@@ -57,14 +57,6 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			System.out.println("Echec de l'insertion de lagent de l'administration.");
-		}try {
-			preparedStatement.close();
-			System.out.println("Fermeture preparedStatement(ajouter) adminstration :  réussit.");
-		} catch (SQLException e) {
-			System.out.println("Echec fermeture preparedStatement(ajouter) adminstration.");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fin traitement ajouter adminstration.");
 		}
 				
 		
@@ -113,14 +105,6 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation des informations de l'agent de l'administration.");
-		}try {
-			preparedStatement.close();
-			System.out.println("Fermeture preparedStatement(lire) adminstration :  réussit.");
-		} catch (SQLException e) {
-			System.out.println("Echec fermeture preparedStatement(lire) adminstration.");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fin traitement lire adminstration.");
 		}
 		
 		return admin;
@@ -163,14 +147,6 @@ Statement statement = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des agents de l'administration.");
-		}try {
-				statement.close();
-			System.out.println("Fermeture statement(liste) adminstration :  réussit.");
-		} catch (SQLException e) {
-			System.out.println("Echec fermeture statement(liste) adminstration.");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fin traitement liste adminstration.");
 		}
 		return listeAdmin;
 	}
@@ -205,14 +181,6 @@ Statement statement = null;
 		} catch (SQLException e1) {
 			System.out.println("Echec de la modification des informations de l'agent de l'administration.");
 			e1.printStackTrace();			
-		}try {
-			preparedStatement.close();
-			System.out.println("Fermeture preparedStatement(modifier) adminstration :  réussit.");
-		} catch (SQLException e) {
-			System.out.println("Echec fermeture preparedStatement(modifier) adminstration.");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fin traitement modifier adminstration.");
 		}
 		
 	}
@@ -235,14 +203,6 @@ Statement statement = null;
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();			
-		}try {
-			preparedStatement.close();
-			System.out.println("Fermeture preparedStatement(supprimer) adminstration :  réussit.");
-		} catch (SQLException e) {
-			System.out.println("Echec fermeture preparedStatement(supprimer) adminstration.");
-			e.printStackTrace();
-		} finally {
-			System.out.println("Fin traitement supprimer adminstration.");
 		}
 		
 	}
@@ -282,15 +242,7 @@ Statement statement = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la récupération du dernier agent administratif enregistré.");
-		}try {
-			statement.close();
-		System.out.println("Fermeture statement(dernierenregistrement) adminstration :  réussit.");
-	} catch (SQLException e) {
-		System.out.println("Echec fermeture statement(dernierenregistrement) adminstration.");
-		e.printStackTrace();
-	} finally {
-		System.out.println("Fin traitement dernierenregistrement adminstration.");
-	}
+		}
 
 		return adminlast;
 	}
