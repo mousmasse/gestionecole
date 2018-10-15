@@ -33,11 +33,11 @@ public class IDaoEleveImpl implements IDaoEleve{
 
 	@Override
 	public void ajouter(Eleve e) {
-		try {
-			//Etape1 : Création de la requête
-			String sql = "INSERT INTO eleve VALUES(NULL,?,?,?,?,?,?,?,?,?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		//Etape1 : Création de la requête
+		String sql = "INSERT INTO eleve VALUES(NULL,?,?,?,?,?,?,?,?,?)";
+		
+		try(PreparedStatement preparedStatement = connexion.prepareStatement(sql)) {
+						
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, e.getNom());
 			preparedStatement.setString(2, e.getPrenom());
@@ -63,34 +63,39 @@ public class IDaoEleveImpl implements IDaoEleve{
 	@Override
 	public List<Eleve> lire() {
 		List<Eleve> liste = new ArrayList<>();
+		//Etape1 : Création de la requête
+		String sql = "SELECT * FROM eleve";
 		
-		try {
-			//Etape1 : Création de la requête
-			String sql = "SELECT * FROM eleve";
-			Statement statement = connexion.createStatement();
-			
+		try (Statement statement = connexion.createStatement()){
+				
 			//Etape2: Exécution de la requête
-			ResultSet resultSet = statement.executeQuery(sql);
-			
-			//Etape3 : Traitement du résultat
-			while (resultSet.next()) {
+			try (ResultSet resultSet = statement.executeQuery(sql)){
 				
-				Eleve e = new Eleve();
+				//Etape3 : Traitement du résultat
+				while (resultSet.next()) {
+					
+					Eleve e = new Eleve();
+					
+					e.setIdEleve(resultSet.getInt("id_eleve")); 
+					e.setNom(resultSet.getString("nom_eleve")); 
+					e.setPrenom(resultSet.getString("prenom_eleve")); 
+					Date date = resultSet.getDate("date_naissance_eleve");
+					e.setDateNaissance(date.toLocalDate()); 
+					e.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
+					e.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
+					e.setAdresse(resultSet.getString("adresse_eleve"));  
+					e.setTelephone(resultSet.getInt("telephonne_eleve")); 
+					e.setEmail(resultSet.getString("email_eleve")); 
+					e.setIdTuteur(resultSet.getInt("id_tuteur"));
+					
+					liste.add(e);
+				}
 				
-				e.setIdEleve(resultSet.getInt("id_eleve")); 
-				e.setNom(resultSet.getString("nom_eleve")); 
-				e.setPrenom(resultSet.getString("prenom_eleve")); 
-				Date date = resultSet.getDate("date_naissance_eleve");
-				e.setDateNaissance(date.toLocalDate()); 
-				e.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
-				e.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
-				e.setAdresse(resultSet.getString("adresse_eleve"));  
-				e.setTelephone(resultSet.getInt("telephonne_eleve")); 
-				e.setEmail(resultSet.getString("email_eleve")); 
-				e.setIdTuteur(resultSet.getInt("id_tuteur"));
-				
-				liste.add(e);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des éléves.");
@@ -100,16 +105,15 @@ public class IDaoEleveImpl implements IDaoEleve{
 
 	@Override
 	public void modifier(Eleve e) {
-
-		try {
-			//Etape1 : Création de la requête
-			String sql;
-			if (e.getIdTuteur()>0) {
-				sql = "UPDATE eleve SET nom_eleve = ?, prenom_eleve=?, date_naissance_eleve =?, lieu_naissance_eleve =?, sexe_eleve =?, adresse_eleve =?, telephonne_eleve =?, email_eleve =?, id_tuteur =? WHERE id_eleve=?";
-			}else {
-				sql = "UPDATE eleve SET nom_eleve = ?, prenom_eleve=?, date_naissance_eleve =?, lieu_naissance_eleve =?, sexe_eleve =?, adresse_eleve =?, telephonne_eleve =?, email_eleve =? WHERE id_eleve=?";
-			}
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+		//Etape1 : Création de la requête
+		String sql;
+		if (e.getIdTuteur()>0) {
+			sql = "UPDATE eleve SET nom_eleve = ?, prenom_eleve=?, date_naissance_eleve =?, lieu_naissance_eleve =?, sexe_eleve =?, adresse_eleve =?, telephonne_eleve =?, email_eleve =?, id_tuteur =? WHERE id_eleve=?";
+		}else {
+			sql = "UPDATE eleve SET nom_eleve = ?, prenom_eleve=?, date_naissance_eleve =?, lieu_naissance_eleve =?, sexe_eleve =?, adresse_eleve =?, telephonne_eleve =?, email_eleve =? WHERE id_eleve=?";
+		}
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
 			
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, e.getNom());
@@ -141,12 +145,11 @@ public class IDaoEleveImpl implements IDaoEleve{
 
 	@Override
 	public void supprimer(Eleve e) {
+		//Etape1 : Création de la requête
+		String sql = "DELETE FROM eleve where id_eleve=?";
 		
-		try {
-			//Etape1 : Création de la requête
-			String sql = "DELETE FROM eleve where id_eleve=?";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+					
 			//Etape2 : transmission de la valeur aux paramètres de la requête
 			preparedStatement.setInt(1, e.getIdEleve());
 			
@@ -165,31 +168,36 @@ public class IDaoEleveImpl implements IDaoEleve{
 	@Override
 	public Eleve dernierenregistrement() {
 		Eleve eleve = new Eleve();
-			try {
-			//Etape1 : Création de la requête
-			String sql = "Select * from eleve where id_eleve = (SELECT MAX(id_eleve)  from eleve)";
-			Statement statement = connexion.createStatement();
+		//Etape1 : Création de la requête
+		String sql = "Select * from eleve where id_eleve = (SELECT MAX(id_eleve)  from eleve)";
+		
+			try(Statement statement = connexion.createStatement()) {
 			
 			//Etape2: Exécution de la requête
-			ResultSet resultSet = statement.executeQuery(sql);
-			
-			//Etape3 : Traitement du résultat
-			while (resultSet.next()) {
+			try(ResultSet resultSet = statement.executeQuery(sql);) {
 				
-			
-				eleve.setIdEleve(resultSet.getInt("id_eleve")); 
-				eleve.setNom(resultSet.getString("nom_eleve")); 
-				eleve.setPrenom(resultSet.getString("prenom_eleve")); 
-				Date date = resultSet.getDate("date_naissance_eleve");
-				eleve.setDateNaissance(date.toLocalDate()); 
-				eleve.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
-				eleve.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
-				eleve.setAdresse(resultSet.getString("adresse_eleve"));  
-				eleve.setTelephone(resultSet.getInt("telephonne_eleve")); 
-				eleve.setEmail(resultSet.getString("email_eleve")); 
-				eleve.setIdTuteur(resultSet.getInt("id_tuteur"));
+				//Etape3 : Traitement du résultat
+				while (resultSet.next()) {
+					
 				
+					eleve.setIdEleve(resultSet.getInt("id_eleve")); 
+					eleve.setNom(resultSet.getString("nom_eleve")); 
+					eleve.setPrenom(resultSet.getString("prenom_eleve")); 
+					Date date = resultSet.getDate("date_naissance_eleve");
+					eleve.setDateNaissance(date.toLocalDate()); 
+					eleve.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
+					eleve.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
+					eleve.setAdresse(resultSet.getString("adresse_eleve"));  
+					eleve.setTelephone(resultSet.getInt("telephonne_eleve")); 
+					eleve.setEmail(resultSet.getString("email_eleve")); 
+					eleve.setIdTuteur(resultSet.getInt("id_tuteur"));
+				}
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la récupération du dernier eleve enregistré.");
@@ -200,33 +208,39 @@ public class IDaoEleveImpl implements IDaoEleve{
 	@Override
 	public Eleve lire(Eleve e) {
 		Eleve eleve = new Eleve();
-		try {
 		//Etape1 : Création de la requête
-		String sql = "Select * from eleve where id_eleve = ?";
-		PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-		
+				String sql = "Select * from eleve where id_eleve = ?";
+				
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+			
 		//Etape2 : transmission de la valeur aux paramètres de la requête
 		preparedStatement.setInt(1, e.getIdEleve());
 		
 		//Etape3 : exécution de la requête
-		ResultSet resultSet = preparedStatement.executeQuery();
-		
-		//Etape3 : Traitement du résultat
-		while (resultSet.next()) {
+		try (ResultSet resultSet = preparedStatement.executeQuery();){
 			
-			eleve.setIdEleve(resultSet.getInt("id_eleve")); 
-			eleve.setNom(resultSet.getString("nom_eleve")); 
-			eleve.setPrenom(resultSet.getString("prenom_eleve")); 
-			Date date2=resultSet.getDate("date_naissance_eleve");
-			eleve.setDateNaissance(date2.toLocalDate()); 
-			eleve.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
-			eleve.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
-			eleve.setAdresse(resultSet.getString("adresse_eleve"));  
-			eleve.setTelephone(resultSet.getInt("telephonne_eleve")); 
-			eleve.setEmail(resultSet.getString("email_eleve")); 
-			eleve.setIdTuteur(resultSet.getInt("id_tuteur"));
+			//Etape3 : Traitement du résultat
+			while (resultSet.next()) {
+				
+				eleve.setIdEleve(resultSet.getInt("id_eleve")); 
+				eleve.setNom(resultSet.getString("nom_eleve")); 
+				eleve.setPrenom(resultSet.getString("prenom_eleve")); 
+				Date date2=resultSet.getDate("date_naissance_eleve");
+				eleve.setDateNaissance(date2.toLocalDate()); 
+				eleve.setLieuNaissance(resultSet.getString("lieu_naissance_eleve"));   
+				eleve.setSexe( resultSet.getString("sexe_eleve").charAt(0));  
+				eleve.setAdresse(resultSet.getString("adresse_eleve"));  
+				eleve.setTelephone(resultSet.getInt("telephonne_eleve")); 
+				eleve.setEmail(resultSet.getString("email_eleve")); 
+				eleve.setIdTuteur(resultSet.getInt("id_tuteur"));
+				
+			}
 			
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		
 	} catch (SQLException e1) {
 		e1.printStackTrace();
 		System.out.println("Echec de la récupération de l'eleve.");

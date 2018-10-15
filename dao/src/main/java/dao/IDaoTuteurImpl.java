@@ -29,11 +29,11 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 	@Override
 	public void ajouter(Tuteur t) {
 
-		try {
-			//Etape1 : Création de la requête
-			String sql = "INSERT INTO tuteur VALUES(NULL,?,?,?,?,?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		//Etape1 : Création de la requête
+		String sql = "INSERT INTO tuteur VALUES(NULL,?,?,?,?,?)";
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+						
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, t.getNom());
 			preparedStatement.setString(2, t.getPrenom());
@@ -55,28 +55,35 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 	@Override
 	public List<Tuteur> lire() {
 		List<Tuteur> listeTuteur = new ArrayList<>();
-		try {
-			//Etape1 : Création de la requête
-			String sql = "SELECT * FROM tuteur";
-			Statement statement = connexion.createStatement();
+		
+		//Etape1 : Création de la requête
+		String sql = "SELECT * FROM tuteur";
+		
+		try (Statement statement = connexion.createStatement()){
 			
 			//Etape2: Exécution de la requête
-			ResultSet resultSet = statement.executeQuery(sql);
-			
-			//Etape3 : Traitement du résultat
-			while (resultSet.next()) {
+			try (ResultSet resultSet = statement.executeQuery(sql)){
 				
-				Tuteur t = new Tuteur();
+				//Etape3 : Traitement du résultat
+				while (resultSet.next()) {
+					
+					Tuteur t = new Tuteur();
+					
+					t.setIdTuteur(resultSet.getInt("id_tuteur")); 
+					t.setNom(resultSet.getString("nom_tuteur")); 
+					t.setPrenom(resultSet.getString("prenom_tuteur")); 
+					t.setAdresse(resultSet.getString("adresse_tuteur"));  
+					t.setTelephone(resultSet.getInt("telephonne_tuteur")); 
+					t.setEmail(resultSet.getString("email_tuteur")); 
+					
+					listeTuteur.add(t);
+				}
 				
-				t.setIdTuteur(resultSet.getInt("id_tuteur")); 
-				t.setNom(resultSet.getString("nom_tuteur")); 
-				t.setPrenom(resultSet.getString("prenom_tuteur")); 
-				t.setAdresse(resultSet.getString("adresse_tuteur"));  
-				t.setTelephone(resultSet.getInt("telephonne_tuteur")); 
-				t.setEmail(resultSet.getString("email_tuteur")); 
-				
-				listeTuteur.add(t);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des tuteurs.");
@@ -86,11 +93,11 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 
 	@Override
 	public void modifier(Tuteur t) {
-		try {
-			//Etape1 : Création de la requête
-			String sql = "UPDATE tuteur SET prenom_tuteur = ?, nom_tuteur=?, telephonne_tuteur =?, email_tuteur =?, adresse_tuteur =? WHERE id_tuteur=?";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		//Etape1 : Création de la requête
+		String sql = "UPDATE tuteur SET prenom_tuteur = ?, nom_tuteur=?, telephonne_tuteur =?, email_tuteur =?, adresse_tuteur =? WHERE id_tuteur=?";
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+					
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setString(1, t.getNom());
 			preparedStatement.setString(2, t.getPrenom());
@@ -114,10 +121,10 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 	@Override
 	public void supprimer(Tuteur t) {
 
-		try {
-			//Etape1 : Création de la requête
-			String sql = "DELETE FROM tuteur where id_tuteur=?";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+		//Etape1 : Création de la requête
+		String sql = "DELETE FROM tuteur where id_tuteur=?";
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
 			
 			//Etape2 : transmission de la valeur aux paramètres de la requête
 			preparedStatement.setInt(1, t.getIdTuteur());
@@ -137,26 +144,33 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 
 	@Override
 	public  Tuteur dernierenregistrement() {
+		
 		Tuteur t = new Tuteur();
-		try {
-			//Etape1 : Création de la requête
-			String sql = "Select * from tuteur where id_tuteur = (SELECT MAX(id_tuteur)  from tuteur)";
-			Statement statement = connexion.createStatement();
-			
+		
+		//Etape1 : Création de la requête
+		String sql = "Select * from tuteur where id_tuteur = (SELECT MAX(id_tuteur)  from tuteur)";
+		
+		try (Statement statement = connexion.createStatement()){
+						
 			//Etape2: Exécution de la requête
-			ResultSet resultSet = statement.executeQuery(sql);
-			
-			//Etape3 : Traitement du résultat
-			while (resultSet.next()) {
+			try(ResultSet resultSet = statement.executeQuery(sql)) {
+
+				//Etape3 : Traitement du résultat
+				while (resultSet.next()) {
 					t.setIdTuteur(resultSet.getInt("id_tuteur")); 
-				t.setNom(resultSet.getString("nom_tuteur")); 
-				t.setPrenom(resultSet.getString("prenom_tuteur")); 
-				t.setAdresse(resultSet.getString("adresse_tuteur"));  
-				t.setTelephone(resultSet.getInt("telephonne_tuteur")); 
-				t.setEmail(resultSet.getString("email_tuteur")); 
+					t.setNom(resultSet.getString("nom_tuteur")); 
+					t.setPrenom(resultSet.getString("prenom_tuteur")); 
+					t.setAdresse(resultSet.getString("adresse_tuteur"));  
+					t.setTelephone(resultSet.getInt("telephonne_tuteur")); 
+					t.setEmail(resultSet.getString("email_tuteur")); 
+										
+				}
 				
-				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des tuteurs.");
@@ -167,31 +181,38 @@ public class IDaoTuteurImpl implements IDaoTuteur {
 
 	@Override
 	public Tuteur lire(Tuteur t) {
+		
 		Tuteur tuteur = new Tuteur();
-		try {
+		
 		//Etape1 : Création de la requête
-		String sql = "Select * from tuteur where id_tuteur = ?";
-		PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+				String sql = "Select * from tuteur where id_tuteur = ?";
+				
+				
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
 		
 		//Etape2 : transmission de la valeur aux paramètres de la requête
 		preparedStatement.setInt(1, t.getIdTuteur());
 		
 		//Etape3 : exécution de la requête
-		ResultSet resultSet = preparedStatement.executeQuery();
-		
-		
-		
-		//Etape3 : Traitement du résultat
-		while (resultSet.next()) {
+		try (ResultSet resultSet = preparedStatement.executeQuery()){
 			
-			tuteur.setIdTuteur(resultSet.getInt("id_tuteur")); 
-			tuteur.setNom(resultSet.getString("nom_tuteur")); 
-			tuteur.setPrenom(resultSet.getString("prenom_tuteur")); 
-			tuteur.setAdresse(resultSet.getString("adresse_tuteur"));  
-			tuteur.setTelephone(resultSet.getInt("telephonne_tuteur")); 
-			tuteur.setEmail(resultSet.getString("email_tuteur")); 
+			//Etape3 : Traitement du résultat
+			while (resultSet.next()) {
+				
+				tuteur.setIdTuteur(resultSet.getInt("id_tuteur")); 
+				tuteur.setNom(resultSet.getString("nom_tuteur")); 
+				tuteur.setPrenom(resultSet.getString("prenom_tuteur")); 
+				tuteur.setAdresse(resultSet.getString("adresse_tuteur"));  
+				tuteur.setTelephone(resultSet.getInt("telephonne_tuteur")); 
+				tuteur.setEmail(resultSet.getString("email_tuteur")); 
+				
+			}
 			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 	} catch (SQLException e1) {
 		e1.printStackTrace();
 		System.out.println("Echec de la récupération du tuteur.");

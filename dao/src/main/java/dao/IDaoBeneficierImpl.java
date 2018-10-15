@@ -31,10 +31,10 @@ public class IDaoBeneficierImpl implements IDaoBeneficier{
 	
 	@Override
 	public void ajouter(Beneficier b) {
-		try {
-			//Etape1 : Création de la requête
-			String sql = "INSERT INTO beneficier VALUES(?,?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
+		//Etape1 : Création de la requête
+		String sql = "INSERT INTO beneficier VALUES(?,?)";
+		
+		try(PreparedStatement preparedStatement = connexion.prepareStatement(sql)) {
 			
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setInt(1, b.getEleve().getIdEleve());
@@ -55,29 +55,34 @@ public class IDaoBeneficierImpl implements IDaoBeneficier{
 	public List<Beneficier> lire() {
 		
 		List<Beneficier> liste = new ArrayList<>();
+		//Etape1 : Création de la requête
+		String sql = "SELECT * FROM beneficier";
 		
-		try {
-			//Etape1 : Création de la requête
-			String sql = "SELECT * FROM beneficier";
-			Statement statement = connexion.createStatement();
+		try (Statement statement = connexion.createStatement()){
 			
 			//Etape2: Exécution de la requête
-			ResultSet resultSet = statement.executeQuery(sql);
-			
-			//Etape3 : Traitement du résultat
-			while (resultSet.next()) {
+			try (ResultSet resultSet = statement.executeQuery(sql);){
 				
-				Beneficier b = new Beneficier();
-				Eleve e = new Eleve();
-				ServicesSup s = new ServicesSup();
+				//Etape3 : Traitement du résultat
+				while (resultSet.next()) {
+					
+					Beneficier b = new Beneficier();
+					Eleve e = new Eleve();
+					ServicesSup s = new ServicesSup();
+					
+					e.setIdEleve(resultSet.getInt("id_eleve"));
+					s.setId_servicessup(resultSet.getInt("id_servicessup"));
+					b.setEleve(e);
+					b.setServiceSup(s);
+					
+					liste.add(b);
+				}
 				
-				e.setIdEleve(resultSet.getInt("id_eleve"));
-				s.setId_servicessup(resultSet.getInt("id_servicessup"));
-				b.setEleve(e);
-				b.setServiceSup(s);
-				
-				liste.add(b);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Echec de la préparation de la liste des éléves bénéficiaires.");
@@ -88,12 +93,11 @@ public class IDaoBeneficierImpl implements IDaoBeneficier{
 	
 	@Override
 	public void supprimer(Beneficier b) {
-
-		try {
-			//Etape1 : Création de la requête
-			String sql = "DELETE FROM beneficier where (id_eleve=? && id_servicessup=?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		//Etape1 : Création de la requête
+		String sql = "DELETE FROM beneficier where (id_eleve=? && id_servicessup=?)";
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+						
 			//Etape2 : transmission de la valeur aux paramètres de la requête
 			preparedStatement.setInt(1, b.getEleve().getIdEleve());
 			preparedStatement.setInt(2,b.getServiceSup().getId_servicessup());
@@ -113,11 +117,11 @@ public class IDaoBeneficierImpl implements IDaoBeneficier{
 	
 	@Override
 	public void modifier(Beneficier b1, Beneficier b2) {
-		try {
-			//Etape1 : Création de la requête
-			String sql = "UPDATE beneficier SET id_eleve=?, id_servicessup=? WHERE (id_eleve=? && id_servicessup=?)";
-			PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-			
+		//Etape1 : Création de la requête
+		String sql = "UPDATE beneficier SET id_eleve=?, id_servicessup=? WHERE (id_eleve=? && id_servicessup=?)";
+		
+		try (PreparedStatement preparedStatement = connexion.prepareStatement(sql)){
+					
 			//Etape2 : transmission des valeurs aux paramètres de la requête
 			preparedStatement.setInt(1, b2.getEleve().getIdEleve());
 			preparedStatement.setInt(2,b2.getServiceSup().getId_servicessup());
