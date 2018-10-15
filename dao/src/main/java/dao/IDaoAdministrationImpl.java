@@ -71,29 +71,35 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 					preparedStatement.setInt(1, a.getIdAdministration());
 
 				//Etape3 : exécution de la requête
-				ResultSet resultSet = null;
-
-					resultSet = preparedStatement.executeQuery();
-
-					//Etape3 : Traitement du résultat
-					while (resultSet.next()) {
-										
-						admin.setIdAdministration(resultSet.getInt("id_administration")); 
-						admin.setNom(resultSet.getString("nom_administration")); 
-						admin.setPrenom(resultSet.getString("prenom_administration")); 
-						Date date = resultSet.getDate("date_naissance_administration");
-						admin.setDateNaissance(date.toLocalDate()); 
-						admin.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
-						admin.setSexe( resultSet.getString("sexe_administration").charAt(0));  
-						admin.setAdresse(resultSet.getString("adresse_administration"));  
-						admin.setTelephone(resultSet.getInt("telephonne_administration")); 
-						admin.setEmail(resultSet.getString("email_administration")); 
-						date = resultSet.getDate("date_recrutement_administration");
-						admin.setDateRecrutementAdministration(date.toLocalDate()); 
-						admin.setIdProfession(resultSet.getInt("id_profession"));
-						admin.setIdDiplome(resultSet.getInt("id_diplome"));
-							
+	
+					try ( ResultSet resultSet = preparedStatement.executeQuery()){
+						
+						//Etape3 : Traitement du résultat
+						while (resultSet.next()) {
+											
+							admin.setIdAdministration(resultSet.getInt("id_administration")); 
+							admin.setNom(resultSet.getString("nom_administration")); 
+							admin.setPrenom(resultSet.getString("prenom_administration")); 
+							Date date = resultSet.getDate("date_naissance_administration");
+							admin.setDateNaissance(date.toLocalDate()); 
+							admin.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
+							admin.setSexe( resultSet.getString("sexe_administration").charAt(0));  
+							admin.setAdresse(resultSet.getString("adresse_administration"));  
+							admin.setTelephone(resultSet.getInt("telephonne_administration")); 
+							admin.setEmail(resultSet.getString("email_administration")); 
+							date = resultSet.getDate("date_recrutement_administration");
+							admin.setDateRecrutementAdministration(date.toLocalDate()); 
+							admin.setIdProfession(resultSet.getInt("id_profession"));
+							admin.setIdDiplome(resultSet.getInt("id_diplome"));
+								
+						}
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+
+					
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -112,31 +118,37 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 
 				try (Statement statement = connexion.createStatement()){
 					//Etape2: Exécution de la requête
-					ResultSet resultSet = null;
 
-					resultSet = statement.executeQuery(sql);			
-					//Etape3 : Traitement du résultat
-					while (resultSet.next()) {
+					try (ResultSet resultSet = statement.executeQuery(sql)){
 						
-						Administration admin = new Administration(); 
+						//Etape3 : Traitement du résultat
+						while (resultSet.next()) {
+							
+							Administration admin = new Administration(); 
+							
+							admin.setIdAdministration(resultSet.getInt("id_administration")); 
+							admin.setNom(resultSet.getString("nom_administration")); 
+							admin.setPrenom(resultSet.getString("prenom_administration")); 
+							Date date = resultSet.getDate("date_naissance_administration");
+							admin.setDateNaissance(date.toLocalDate()); 
+							admin.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
+							admin.setSexe( resultSet.getString("sexe_administration").charAt(0));  
+							admin.setAdresse(resultSet.getString("adresse_administration"));  
+							admin.setTelephone(resultSet.getInt("telephonne_administration")); 
+							admin.setEmail(resultSet.getString("email_administration")); 
+							date = resultSet.getDate("date_recrutement_administration");
+							admin.setDateRecrutementAdministration(date.toLocalDate()); 
+							admin.setIdProfession(resultSet.getInt("id_profession"));
+							admin.setIdDiplome(resultSet.getInt("id_diplome"));
+							
+							listeAdmin.add(admin);
+						}
 						
-						admin.setIdAdministration(resultSet.getInt("id_administration")); 
-						admin.setNom(resultSet.getString("nom_administration")); 
-						admin.setPrenom(resultSet.getString("prenom_administration")); 
-						Date date = resultSet.getDate("date_naissance_administration");
-						admin.setDateNaissance(date.toLocalDate()); 
-						admin.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
-						admin.setSexe( resultSet.getString("sexe_administration").charAt(0));  
-						admin.setAdresse(resultSet.getString("adresse_administration"));  
-						admin.setTelephone(resultSet.getInt("telephonne_administration")); 
-						admin.setEmail(resultSet.getString("email_administration")); 
-						date = resultSet.getDate("date_recrutement_administration");
-						admin.setDateRecrutementAdministration(date.toLocalDate()); 
-						admin.setIdProfession(resultSet.getInt("id_profession"));
-						admin.setIdDiplome(resultSet.getInt("id_diplome"));
-						
-						listeAdmin.add(admin);
-					}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}			
+					
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -211,32 +223,33 @@ public class IDaoAdministrationImpl implements IDaoAdministration{
 			 
 				try (Statement statement = connexion.createStatement()) {
 					
-
 					//Etape2: Exécution de la requête
-					ResultSet resultSet = null;
 
-					resultSet = statement.executeQuery(sql);
-
-					//Etape3 : Traitement du résultat
-					while (resultSet.next()) {
-						
-					
-						adminlast.setIdAdministration(resultSet.getInt("id_administration")); 
-						adminlast.setNom(resultSet.getString("nom_administration")); 
-						adminlast.setPrenom(resultSet.getString("prenom_administration")); 
-						Date date = resultSet.getDate("date_naissance_administration");
-						adminlast.setDateNaissance(date.toLocalDate()); 
-						adminlast.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
-						adminlast.setSexe( resultSet.getString("sexe_administration").charAt(0));  
-						adminlast.setAdresse(resultSet.getString("adresse_administration"));  
-						adminlast.setTelephone(resultSet.getInt("telephonne_administration")); 
-						adminlast.setEmail(resultSet.getString("email_administration")); 
-						date = resultSet.getDate("date_recrutement_administration");
-						adminlast.setDateRecrutementAdministration(date.toLocalDate()); 
-						adminlast.setIdProfession(resultSet.getInt("id_profession"));
-						adminlast.setIdDiplome(resultSet.getInt("id_diplome"));
-						
+					try (ResultSet resultSet = statement.executeQuery(sql)){
+						//Etape3 : Traitement du résultat
+						while (resultSet.next()) {
+							
+							adminlast.setIdAdministration(resultSet.getInt("id_administration")); 
+							adminlast.setNom(resultSet.getString("nom_administration")); 
+							adminlast.setPrenom(resultSet.getString("prenom_administration")); 
+							Date date = resultSet.getDate("date_naissance_administration");
+							adminlast.setDateNaissance(date.toLocalDate()); 
+							adminlast.setLieuNaissance(resultSet.getString("lieu_naissance_administration"));   
+							adminlast.setSexe( resultSet.getString("sexe_administration").charAt(0));  
+							adminlast.setAdresse(resultSet.getString("adresse_administration"));  
+							adminlast.setTelephone(resultSet.getInt("telephonne_administration")); 
+							adminlast.setEmail(resultSet.getString("email_administration")); 
+							date = resultSet.getDate("date_recrutement_administration");
+							adminlast.setDateRecrutementAdministration(date.toLocalDate()); 
+							adminlast.setIdProfession(resultSet.getInt("id_profession"));
+							adminlast.setIdDiplome(resultSet.getInt("id_diplome"));
+							
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
