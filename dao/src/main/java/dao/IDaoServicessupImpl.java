@@ -176,16 +176,24 @@ public class IDaoServicessupImpl implements IDaoServicessup {
 		preparedStatement.setString(1, s.getLibelle_servicessup());
 		
 		//Etape3 : exécution de la requête
-		ResultSet resultSet = preparedStatement.executeQuery();
 		
-		//Etape3 : Traitement du résultat
-		while (resultSet.next()) {
+		try (ResultSet resultSet = preparedStatement.executeQuery()){
 			
-			serviceSup.setId_servicessup(resultSet.getInt("id_servicessup"));
-			serviceSup.setLibelle_servicessup(resultSet.getString("libelle_servicessup"));
-			serviceSup.setPrix_servicessup(resultSet.getDouble("prix_servicessup"));
+			//Etape3 : Traitement du résultat
+			while (resultSet.next()) {
+				
+				serviceSup.setId_servicessup(resultSet.getInt("id_servicessup"));
+				serviceSup.setLibelle_servicessup(resultSet.getString("libelle_servicessup"));
+				serviceSup.setPrix_servicessup(resultSet.getDouble("prix_servicessup"));
+				
+			}
 			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		
 	} catch (SQLException e1) {
 		e1.printStackTrace();
 		System.out.println("Echec de la récupération du service supplémentaire.");

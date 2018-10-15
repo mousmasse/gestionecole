@@ -936,18 +936,21 @@ public class Main {
 							do {
 								System.out.println("Donnez la classe (CI - CP - CE1 - CE2 - CM1 -CM2) de l'éléve (Ancienne valeur: "+eleve.getClass()+")");
 								String classe = sc.nextLine();
-								if (classe.trim().toUpperCase().equals("CI")) {
-									classeRep = 'O';
-								} else if (classe.trim().toUpperCase().equals("CP")) {
-									classeRep = 'O';
-								} else if (classe.trim().toUpperCase().equals("CE1")) {
-									classeRep = 'O';
-								} else if (classe.trim().toUpperCase().equals("CE2")) {
-									classeRep = 'O';
-								} else if (classe.trim().toUpperCase().equals("CM1")) {
-									classeRep = 'O';
-								} else if (classe.trim().toUpperCase().equals("CM2")) {
-									classeRep = 'O';
+								switch (classe.toUpperCase()) {
+								case "CI": classeRep = 'O';
+									break;
+								case "CP": classeRep = 'O';
+								break;
+								case "CE1": classeRep = 'O';
+								break;
+								case "CE2": classeRep = 'O';
+								break;
+								case "CM1": classeRep = 'O';
+								break;
+								case "CM2": classeRep = 'O';
+								break;
+								default: classeRep = 'n';
+									break;
 								}
 
 							} while (classeRep == 'n');
