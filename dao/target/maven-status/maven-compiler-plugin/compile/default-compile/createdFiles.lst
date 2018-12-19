@@ -1,0 +1,11 @@
+dao\IDaoTuteurImpl.class
+dao\IDaoTuteur.class
+dao\IDaoAdministration.class
+dao\IDaoAdministrationImpl.class
+dao\IDaoBeneficier.class
+dao\IDaoEleve.class
+dao\IDaoServicessup.class
+dao\IDaoServicessupImpl.class
+dao\IDaoGenerique.class
+dao\IDaoEleveImpl.class
+dao\IDaoBeneficierImpl.class

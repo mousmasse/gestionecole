@@ -1,0 +1,6 @@
+metier\Administration.class
+metier\Beneficier.class
+metier\Eleve.class
+metier\Personne.class
+metier\ServicesSup.class
+metier\Tuteur.class
